@@ -1,0 +1,15 @@
+.env
+__pycache__/
+*.pyc
+.streamlit/secrets.toml
+
+# Claude Code のローカル設定（マシン固有のパス・権限設定のため除外）
+.claude/settings.local.json
+
+# Claude Code のスキル評価まわり（内部テスト用の副産物・ダミーキーを含むため除外）
+.claude/skills/security-check-workspace/
+.claude/skills/security-check/evals/
+.claude/skills/security-check.skill
+# 外部の skill-creator へのシンボリックリンク／エージェント基盤（このアプリの一部ではない）
+.claude/skills/skill-creator
+.agents/
