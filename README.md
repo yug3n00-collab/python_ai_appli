@@ -1,7 +1,8 @@
 # ✍️ AIライティングツール
 
-Streamlit と Gemini API（[`google-genai`](https://pypi.org/project/google-genai/) SDK）で作った、個人用のオールインワン文章作成支援アプリです。
-データベースも認証もなく、すべてローカルで `.env` のAPIキーを使って動作します。
+Streamlit と Gemini API（[`google-genai`](https://pypi.org/project/google-genai/) SDK）で作った、オールインワンの文章作成支援アプリです。
+APIキーはアプリ起動後に**ブラウザ（サイドバー）から各利用者が入力**する方式で、ローカル実行のほか
+Streamlit Community Cloud などへの公開にも対応しています（データベースは持ちません）。
 
 ## 主な機能
 
@@ -41,8 +42,9 @@ streamlit run Home.py
 [Google AI Studio](https://aistudio.google.com/apikey) で取得した Gemini API キーを、
 アプリ起動後に**サイドバーの「Gemini API キー」欄に直接入力**してください。
 
-> 入力したキーはそのブラウザのセッション内にのみ保持され、サーバーやファイルには保存されません。
-> （タブを閉じる／リロードすると再入力が必要です。）
+> 入力したキーは生成リクエストの実行にのみ使われ、アプリのサーバー側セッションに一時的に保持されます
+> （ファイルやデータベースには保存されず、セッション終了で破棄されます）。
+> タブを閉じる／リロードすると再入力が必要です。共有端末では使用後にタブを閉じてください。
 >
 > **ローカル開発**で毎回の入力を省きたい場合は、プロジェクト直下に `.env` を作成して
 > 次の2行を記入すると、起動時に自動で読み込まれます（`.env.example` を参照）。
@@ -68,6 +70,7 @@ streamlit run Home.py
 │   └── ui.py               # 共通UI部品（APIキー確認・モデル選択・温度スライダー）
 ├── requirements.txt
 ├── .env.example
+├── SECURITY_REVIEW.md      # 公開にあたって実施したセキュリティレビューの記録
 └── .claude/skills/security-check/   # Streamlit/LLM アプリ向けセキュリティレビュー用 Claude Code スキル
 ```
 
@@ -81,6 +84,8 @@ streamlit run Home.py
 [Claude Code](https://claude.com/claude-code) 用のセキュリティレビュースキルを同梱しています。
 シークレット漏洩・プロンプトインジェクション・出力まわり（XSS / `unsafe_allow_html`）・依存関係の脆弱性を重点的に確認し、
 重大度別の所見レポートと修正提案を出力します。
+
+このアプリ自体を公開する前に同スキルでレビューした結果は [`SECURITY_REVIEW.md`](./SECURITY_REVIEW.md) にまとめています。
 
 ## 技術スタック
 
