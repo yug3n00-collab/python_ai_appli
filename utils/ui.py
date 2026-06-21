@@ -1,17 +1,39 @@
 """各ページで共通して使う UI 部品。"""
 import streamlit as st
 
-from utils.gemini_client import DEFAULT_MODEL, MODEL_OPTIONS, is_configured
+from utils.gemini_client import (
+    API_KEY_SESSION_KEY,
+    DEFAULT_MODEL,
+    MODEL_OPTIONS,
+    is_configured,
+)
+
+
+def api_key_input() -> None:
+    """サイドバーに Gemini API キーの入力欄を表示する。
+
+    入力値は st.session_state[API_KEY_SESSION_KEY] に保持され、
+    同一セッション内の全ページで共有される（ファイルには保存されない）。
+    """
+    with st.sidebar:
+        st.text_input(
+            "Gemini API キー",
+            type="password",
+            key=API_KEY_SESSION_KEY,
+            placeholder="AIza... から始まるキーを入力",
+            help=(
+                "Google AI Studio（https://aistudio.google.com/apikey）で取得した"
+                "API キーを入力してください。キーはこのブラウザのセッション内にのみ保持され、"
+                "サーバーやファイルには保存されません。"
+            ),
+        )
 
 
 def require_api_key() -> None:
-    """API キー未設定の場合は警告を表示してページの実行を止める。"""
+    """サイドバーに入力欄を表示し、API キー未設定ならページの実行を止める。"""
+    api_key_input()
     if not is_configured():
-        st.error(
-            "GEMINI_API_KEY が設定されていません。\n\n"
-            "プロジェクト直下に `.env` ファイルを作成し、"
-            "`GEMINI_API_KEY=あなたのAPIキー` の形式で設定してください。"
-        )
+        st.info("👈 サイドバーに Gemini API キーを入力すると、この機能を利用できます。")
         st.stop()
 
 

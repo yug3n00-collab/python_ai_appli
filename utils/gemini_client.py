@@ -14,9 +14,17 @@ MODEL_OPTIONS = {
     "Gemini 2.5 Pro（高品質・低速）": "gemini-2.5-pro",
 }
 
+# ブラウザで入力された API キーを保持する st.session_state のキー名。
+API_KEY_SESSION_KEY = "gemini_api_key"
+
 
 def get_api_key() -> str | None:
-    return os.environ.get("GEMINI_API_KEY")
+    """ブラウザ（サイドバー）で入力されたキーを優先し、無ければ環境変数を使う。"""
+    key = st.session_state.get(API_KEY_SESSION_KEY)
+    if key and key.strip():
+        return key.strip()
+    env_key = os.environ.get("GEMINI_API_KEY")
+    return env_key.strip() if env_key else None
 
 
 @st.cache_resource(show_spinner=False)
@@ -38,7 +46,7 @@ def generate_text(
     api_key = get_api_key()
     if not api_key:
         raise RuntimeError(
-            "GEMINI_API_KEY が設定されていません。.env ファイルに設定してください。"
+            "Gemini API キーが設定されていません。サイドバーの入力欄にキーを入力してください。"
         )
 
     client = _get_client(api_key)

@@ -16,15 +16,15 @@ streamlit run Home.py             # アプリの起動（マルチページ構�
 テスト・リンター・ビルド手順は設定されていません。
 
 ### セットアップ
-`.env.example` を `.env` にコピーし、`GEMINI_API_KEY=...` を設定してください。`.env` は `.gitignore` 対象です。各機能ページではAPIキーが未設定の場合、画面上に警告を表示して `st.stop()` で処理を止めます（`utils/ui.require_api_key` 参照）。
+APIキーは**アプリ起動後にサイドバーの入力欄から直接入力**します（`utils/ui.api_key_input`）。入力値は `st.session_state[API_KEY_SESSION_KEY]` に保持され、同一セッション内の全ページで共有されます（ファイルには保存されません）。任意で `.env.example` を `.env` にコピーして `GEMINI_API_KEY=...` を設定しておくと、入力欄が空のときのフォールバックとして自動で読み込まれます（`.env` は `.gitignore` 対象）。各機能ページではAPIキーが未設定の場合、案内を表示して `st.stop()` で処理を止めます（`utils/ui.require_api_key` 参照）。
 
 ## アーキテクチャ
 
 **Streamlitのマルチページアプリです。** `Home.py` がエントリーポイント（トップページ）で、各AI機能は `pages/` 配下に1ファイルずつ配置されています。ファイル名は Streamlit の規約に従い `番号_絵文字_名前.py` の形式（先頭の番号がサイドバーの並び順、絵文字がナビゲーションのアイコンになります）。
 
 **共通処理は `utils/` にまとめており、各ページで重複させない構成になっています：**
-- `utils/gemini_client.py` — Gemini API とやり取りする唯一の場所。`DEFAULT_MODEL`/`MODEL_OPTIONS` を保持し、`python-dotenv` 経由で環境変数から `GEMINI_API_KEY` を読み込み、`st.cache_resource` で `genai.Client` をキャッシュし、各ページから呼び出される `generate_text(prompt, system_instruction=None, model=..., temperature=...)` を提供します（戻り値は単純な文字列）。
-- `utils/ui.py` — 全ての機能ページで使われる共通UI部品。`require_api_key()`（キー未設定時に警告＋`st.stop()`）、`model_selector()`（`MODEL_OPTIONS` からモデルIDを返すサイドバーのドロップダウン）、`temperature_slider(default)`（サイドバーの創造性スライダー）。
+- `utils/gemini_client.py` — Gemini API とやり取りする唯一の場所。`DEFAULT_MODEL`/`MODEL_OPTIONS` を保持し、APIキーは `st.session_state`（ブラウザ入力）を優先し無ければ `python-dotenv` 経由の環境変数 `GEMINI_API_KEY` をフォールバックとして読み込み（`get_api_key()`）、`st.cache_resource` で `genai.Client` をキャッシュし、各ページから呼び出される `generate_text(prompt, system_instruction=None, model=..., temperature=...)` を提供します（戻り値は単純な文字列）。
+- `utils/ui.py` — 全ての機能ページで使われる共通UI部品。`api_key_input()`（サイドバーのAPIキー入力欄。`require_api_key()` と `Home.py` から呼ばれる）、`require_api_key()`（入力欄を表示しキー未設定時は案内＋`st.stop()`）、`model_selector()`（`MODEL_OPTIONS` からモデルIDを返すサイドバーのドロップダウン）、`temperature_slider(default)`（サイドバーの創造性スライダー）。
 
 **ページの作り方は統一されたパターンに従っています。** 新機能を追加する際は、既存ページ（単純な単一出力の機能なら `pages/3_📄_文章要約.py`、複数パターン生成の機能なら `pages/6_📱_SNS投稿文作成.py`）をコピーして使うのが手早いです：
 1. `st.set_page_config(...)` とタイトル・キャプション

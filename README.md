@@ -28,29 +28,25 @@ Streamlit と Gemini API（[`google-genai`](https://pypi.org/project/google-gena
 pip install -r requirements.txt
 ```
 
-### 2. APIキーの設定
-
-[Google AI Studio](https://aistudio.google.com/apikey) で取得した Gemini API キーを設定します。
-`.env.example` をコピーして `.env` を作成し、キーを記入してください。
-
-```bash
-cp .env.example .env
-```
-
-```env
-GEMINI_API_KEY=あなたのAPIキー
-```
-
-> `.env` は `.gitignore` 対象です。APIキーは絶対にコミットしないでください。
-> キーが未設定の場合、各機能ページは画面に警告を表示して処理を停止します。
-
-### 3. 起動
+### 2. 起動
 
 ```bash
 streamlit run Home.py
 ```
 
 ブラウザが自動で開きます。Windows では同梱の `起動.bat` をダブルクリックしても起動できます（パスは環境に合わせて調整してください）。
+
+### 3. APIキーの入力
+
+[Google AI Studio](https://aistudio.google.com/apikey) で取得した Gemini API キーを、
+アプリ起動後に**サイドバーの「Gemini API キー」欄に直接入力**してください。
+
+> 入力したキーはそのブラウザのセッション内にのみ保持され、サーバーやファイルには保存されません。
+> （タブを閉じる／リロードすると再入力が必要です。）
+>
+> 毎回の入力を省きたい場合は、プロジェクト直下に `.env` を作成して
+> `GEMINI_API_KEY=あなたのAPIキー` を記入しておくと、起動時に自動で読み込まれます
+> （`.env.example` を参照。`.env` は `.gitignore` 対象なのでコミットされません）。
 
 ## プロジェクト構成
 

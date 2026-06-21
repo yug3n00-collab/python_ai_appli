@@ -1,6 +1,7 @@
 import streamlit as st
 
 from utils.gemini_client import is_configured
+from utils.ui import api_key_input
 
 st.set_page_config(
     page_title="AIライティングツール",
@@ -11,14 +12,15 @@ st.set_page_config(
 st.title("✍️ AIライティングツール")
 st.caption("Gemini API を使った、個人用のオールインワン文章作成支援アプリです。")
 
+api_key_input()
+
 if is_configured():
     st.success("Gemini API キーが設定されています。左側のメニューから機能を選んでください。")
 else:
     st.warning(
         "Gemini API キーが設定されていません。\n\n"
-        "プロジェクト直下に `.env` ファイルを作成し、"
-        "`GEMINI_API_KEY=あなたのAPIキー` の形式で設定してください。"
-        "（`.env.example` を参考にしてください）"
+        "サイドバーの「Gemini API キー」欄にキーを入力してください。"
+        "キーは [Google AI Studio](https://aistudio.google.com/apikey) で取得できます。"
     )
 
 st.markdown("## 利用できる機能")
