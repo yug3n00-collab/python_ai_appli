@@ -1,3 +1,5 @@
+import logging
+
 import streamlit as st
 
 from utils.gemini_client import generate_text
@@ -56,8 +58,9 @@ if submitted:
         with st.spinner("翻訳しています..."):
             try:
                 result = generate_text(prompt, model=model, temperature=temperature)
-            except Exception as e:
-                st.error(f"生成中にエラーが発生しました: {e}")
+            except Exception:
+                logging.exception("テキスト生成に失敗しました")
+                st.error("生成中にエラーが発生しました。APIキーや入力内容をご確認のうえ、再度お試しください。")
             else:
                 st.markdown("### 翻訳結果")
                 st.markdown(result)

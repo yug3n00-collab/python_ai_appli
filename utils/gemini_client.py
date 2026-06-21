@@ -17,14 +17,26 @@ MODEL_OPTIONS = {
 # ブラウザで入力された API キーを保持する st.session_state のキー名。
 API_KEY_SESSION_KEY = "gemini_api_key"
 
+# 環境変数 GEMINI_API_KEY をフォールバックとして使うかどうか。
+# 公開環境（Streamlit Community Cloud 等）では既定で無効。所有者のキーが
+# 匿名の利用者に共有され、課金枠を悪用される事故を防ぐため、ローカル開発で
+# 明示的に ALLOW_ENV_KEY_FALLBACK=1 を設定したときだけ有効にする。
+ALLOW_ENV_KEY_FALLBACK = os.environ.get("ALLOW_ENV_KEY_FALLBACK") == "1"
+
 
 def get_api_key() -> str | None:
-    """ブラウザ（サイドバー）で入力されたキーを優先し、無ければ環境変数を使う。"""
+    """ブラウザ（サイドバー）で入力されたキーを使う。
+
+    ALLOW_ENV_KEY_FALLBACK=1 のときのみ、環境変数 GEMINI_API_KEY を
+    フォールバックとして使う（ローカル開発向け）。
+    """
     key = st.session_state.get(API_KEY_SESSION_KEY)
     if key and key.strip():
         return key.strip()
-    env_key = os.environ.get("GEMINI_API_KEY")
-    return env_key.strip() if env_key else None
+    if ALLOW_ENV_KEY_FALLBACK:
+        env_key = os.environ.get("GEMINI_API_KEY")
+        return env_key.strip() if env_key else None
+    return None
 
 
 @st.cache_resource(show_spinner=False)

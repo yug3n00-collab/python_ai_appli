@@ -16,7 +16,7 @@ streamlit run Home.py             # アプリの起動（マルチページ構�
 テスト・リンター・ビルド手順は設定されていません。
 
 ### セットアップ
-APIキーは**アプリ起動後にサイドバーの入力欄から直接入力**します（`utils/ui.api_key_input`）。入力値は `st.session_state[API_KEY_SESSION_KEY]` に保持され、同一セッション内の全ページで共有されます（ファイルには保存されません）。任意で `.env.example` を `.env` にコピーして `GEMINI_API_KEY=...` を設定しておくと、入力欄が空のときのフォールバックとして自動で読み込まれます（`.env` は `.gitignore` 対象）。各機能ページではAPIキーが未設定の場合、案内を表示して `st.stop()` で処理を止めます（`utils/ui.require_api_key` 参照）。
+APIキーは**アプリ起動後にサイドバーの入力欄から直接入力**します（`utils/ui.api_key_input`）。入力値は `st.session_state[API_KEY_SESSION_KEY]` に保持され、同一セッション内の全ページで共有されます（ファイルには保存されません）。ローカル開発では `.env` に `GEMINI_API_KEY=...` と `ALLOW_ENV_KEY_FALLBACK=1` の両方を設定すると、入力欄が空のときのフォールバックとして自動で読み込まれます（`.env` は `.gitignore` 対象）。**`ALLOW_ENV_KEY_FALLBACK` を設定しない限り環境変数のキーは使われません**——公開環境で所有者のキーが匿名利用者に共有される事故を防ぐためのガードです（`utils/gemini_client.get_api_key` 参照）。各機能ページではAPIキーが未設定の場合、案内を表示して `st.stop()` で処理を止めます（`utils/ui.require_api_key` 参照）。
 
 ## アーキテクチャ
 
