@@ -1,0 +1,14 @@
+# リポジトリ内のテキストファイルは LF に統一（自動判定＋正規化）
+* text=auto eol=lf
+
+# Windows 専用のバッチファイルは CRLF を維持
+*.bat text eol=crlf
+
+# バイナリ扱いにすべきファイル（改行変換しない）
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.skill binary
